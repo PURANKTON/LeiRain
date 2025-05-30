@@ -86,12 +86,6 @@
                 <i class="fa fa-refresh mr-2"></i> 换一句
               </button>
               <div class="flex space-x-2">
-                <button id="share-weibo-btn" class="bg-[#E6162D] hover:bg-[#E6162D]/90 text-white py-2 px-4 rounded-md transition-all-300">
-                  <i class="fa fa-weibo"></i>
-                </button>
-                <button id="share-wechat-btn" class="bg-[#07C160] hover:bg-[#07C160]/90 text-white py-2 px-4 rounded-md transition-all-300">
-                  <i class="fa fa-wechat"></i>
-                </button>
                 <button id="copy-btn" class="bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded-md transition-all-300">
                   <i class="fa fa-copy"></i>
                 </button>
@@ -152,17 +146,11 @@
   <!-- 页脚 -->
   <footer class="bg-dark text-white py-6">
     <div class="container mx-auto px-4 text-center">
-      <p>© 2025 一言系统 - 分享生活中的美好瞬间</p>
-      <div class="flex justify-center mt-4 space-x-4">
-        <a href="#" class="text-gray-400 hover:text-white transition-all-300">
-          <i class="fa fa-github text-xl"></i>
-        </a>
-        <a href="#" class="text-gray-400 hover:text-white transition-all-300">
-          <i class="fa fa-twitter text-xl"></i>
-        </a>
-        <a href="#" class="text-gray-400 hover:text-white transition-all-300">
-          <i class="fa fa-weibo text-xl"></i>
-        </a>
+      <p>© 2025 Cynara All Rights Reserved.</p>
+<!--      <div class="flex justify-center mt-4 space-x-4">-->
+<!--        <a href="#" class="text-gray-400 hover:text-white transition-all-300">-->
+<!--          <i class="fa fa-github text-xl"></i>-->
+<!--        </a>-->
       </div>
     </div>
   </footer>
@@ -175,7 +163,7 @@
 
   <script>
     // API 配置
-    const API_BASE_URL = 'http://7e526c6c1d80.ofalias.net:54970/api';
+    const API_BASE_URL = 'http://internal.zhngjah.space:5000/api';
 
     // DOM 元素
     const navbar = document.getElementById('navbar');
@@ -184,8 +172,6 @@
     const hitokotoSource = document.getElementById('hitokoto-source');
     const newHitokotoBtn = document.getElementById('new-hitokoto-btn');
     const copyBtn = document.getElementById('copy-btn');
-    const shareWeiboBtn = document.getElementById('share-weibo-btn');
-    const shareWechatBtn = document.getElementById('share-wechat-btn');
     const addHitokotoForm = document.getElementById('add-hitokoto-form');
     const contentInput = document.getElementById('content');
     const contentError = document.getElementById('content-error');
@@ -230,12 +216,6 @@
 
       // 复制按钮事件
       copyBtn.addEventListener('click', copyToClipboard);
-
-      // 分享到微博
-      shareWeiboBtn.addEventListener('click', shareToWeibo);
-
-      // 分享到微信
-      shareWechatBtn.addEventListener('click', showWechatShare);
 
       // 添加一言表单提交
       addHitokotoForm.addEventListener('submit', handleAddHitokoto);
@@ -290,7 +270,7 @@
           hitokotoContent.innerHTML = `
             <div class="text-red-500 text-center">
               <i class="fa fa-exclamation-circle text-2xl mb-2"></i>
-              <p>加载失败，请检查API连接</p>
+              <p>连接断开，请与管理员联系</p>
             </div>
           `;
         });
@@ -308,19 +288,6 @@
           console.error('复制失败:', err);
           showNotification('复制失败，请手动复制', 'error');
         });
-    }
-
-    // 分享到微博
-    function shareToWeibo() {
-      const text = `${hitokotoContent.textContent} ${hitokotoAuthor.textContent} ${hitokotoSource.textContent} #一言#`;
-      const url = `https://service.weibo.com/share/share.php?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(text)}`;
-
-      window.open(url, '_blank', 'width=600,height=400');
-    }
-
-    // 显示微信分享提示
-    function showWechatShare() {
-      showNotification('请使用浏览器的分享功能分享到微信', 'info');
     }
 
     // 处理添加一言
