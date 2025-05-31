@@ -7,9 +7,9 @@ CORS(app)
 # 请修改为你的MySQL连接信息
 hitokoto = HitokotoSystem(
     host='192.168.10.105',
-    user='tangrain',
-    password='LTNmsn74ytJdYYEi',
-    database='tangrain'
+    user='root',
+    password='Xx090202',
+    database='layrain'
 )
 
 

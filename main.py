@@ -173,9 +173,9 @@ if __name__ == "__main__":
     # 初始化一言系统，请修改为你的MySQL连接信息
     hitokoto = HitokotoSystem(
         host='192.168.10.105',
-        user='tangrain',
-        password='LTNmsn74ytJdYYEi',
-        database='tangrain'
+        user='root',
+        password='Xx090202',
+        database='layrain'
     )
 
     # # 添加一些示例一言
