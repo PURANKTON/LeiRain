@@ -1,380 +1,833 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LayRain</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#3b82f6',
-            secondary: '#10b981',
-            accent: '#8b5cf6',
-            dark: '#1e293b',
-            light: '#f8fafc'
-          },
-          fontFamily: {
-            inter: ['Inter', 'system-ui', 'sans-serif'],
-          },
-        },
-      }
-    }
-  </script>
-  <style type="text/tailwindcss">
-    @layer utilities {
-      .content-auto {
-        content-visibility: auto;
-      }
-      .text-shadow {
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      }
-      .bg-gradient-primary {
-        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-      }
-      .transition-all-300 {
-        transition: all 0.3s ease;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LayRain</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #5b7cfa;
+            --secondary-color: #f8f9fa;
+            --accent-color: #6f42c1;
+            --light-color: #ffffff;
+            --dark-color: #343a40;
+            --success-color: #20c997;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e6e9f2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 60px;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .hitokoto-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .hitokoto-text {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            font-weight: 500;
+            color: var(--dark-color);
+            font-style: italic;
+        }
+
+        .category-badge {
+            background: linear-gradient(45deg, var(--accent-color), #8a63d2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(91, 124, 250, 0.4);
+        }
+
+        .btn-success-gradient {
+            background: linear-gradient(90deg, var(--success-color), #1aab8a);
+        }
+
+        .hitokoto-list-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .hitokoto-list-item:hover {
+            background-color: rgba(91, 124, 250, 0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.5s;
+        }
+
+        .fade-enter, .fade-leave-to {
+            opacity: 0;
+        }
+
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-color: transparent;
+        }
+
+        .author-highlight {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .source-highlight {
+            color: #17a2b8;
+            font-weight: 500;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-radius: 0 0 30px 30px;
+            padding: 80px 0 60px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+
+        .today-hitokoto {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .submission-form {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .quote-icon {
+            font-size: 3rem;
+            opacity: 0.2;
+            position: absolute;
+        }
+
+        .quote-left {
+            top: 10px;
+            left: 20px;
+        }
+
+        .quote-right {
+            bottom: 10px;
+            right: 20px;
+        }
+
+        .contributor-badge {
+            background: linear-gradient(45deg, #20c997, #1aab8a);
+            color: white;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .highlight-card {
+            border: 2px solid rgba(91, 124, 250, 0.3);
+            background: linear-gradient(135deg, #f8f9ff, #eef0ff);
+        }
+    </style>
 </head>
-<body class="font-inter bg-light text-dark min-h-screen flex flex-col">
-  <!-- 导航栏 -->
-  <nav class="bg-white shadow-md fixed w-full z-10 transition-all duration-300" id="navbar">
-    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center space-x-2">
-        <i class="fa fa-quote-left text-primary text-2xl"></i>
-        <h1 class="text-xl md:text-2xl font-bold text-primary">一言系统</h1>
-      </div>
-      <div class="flex items-center space-x-4">
-        <a href="#random" class="text-dark hover:text-primary transition-all-300 px-3 py-2 rounded-md">
-          <i class="fa fa-random mr-1"></i> 随机一言
-        </a>
-        <a href="#add" class="text-dark hover:text-primary transition-all-300 px-3 py-2 rounded-md">
-          <i class="fa fa-plus mr-1"></i> 添加一言
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- 主要内容 -->
-  <main class="flex-grow pt-20 pb-10">
-    <div class="container mx-auto px-4">
-      <!-- 随机一言部分 -->
-      <section id="random" class="py-10 scroll-mt-20">
-        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl">
-          <div class="bg-gradient-primary p-6 text-white">
-            <h2 class="text-2xl md:text-3xl font-bold text-shadow">随机一言</h2>
-            <p class="opacity-90">每天一句，点亮生活</p>
-          </div>
-          <div class="p-6">
-            <div id="hitokoto-content" class="text-lg md:text-xl italic mb-4 min-h-[100px] flex items-center justify-center">
-              <div class="text-gray-400 text-center">
-                <i class="fa fa-spinner fa-spin text-2xl mb-2"></i>
-                <p>正在加载一言...</p>
-              </div>
-            </div>
-            <div id="hitokoto-meta" class="text-right text-gray-600 mt-2">
-              <span id="hitokoto-author" class="font-medium">-</span>
-              <span id="hitokoto-source" class="ml-2">《-》</span>
-            </div>
-            <div class="flex justify-between mt-6">
-              <button id="new-hitokoto-btn" class="bg-primary hover:bg-primary/90 text-white py-2 px-6 rounded-md transition-all-300 flex items-center">
-                <i class="fa fa-refresh mr-2"></i> 换一句
-              </button>
-              <div class="flex space-x-2">
-                <button id="copy-btn" class="bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded-md transition-all-300">
-                  <i class="fa fa-copy"></i>
+<body>
+    <div id="app">
+        <!-- 导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <i class="fas fa-quote-left me-2"></i>
+                    <span>LayRain</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
                 </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 添加一言部分 -->
-      <section id="add" class="py-10 scroll-mt-20">
-        <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl">
-          <div class="bg-secondary p-6 text-white">
-            <h2 class="text-2xl md:text-3xl font-bold text-shadow">添加一言</h2>
-            <p class="opacity-90">分享你的感悟，传递温暖</p>
-          </div>
-          <div class="p-6">
-            <form id="add-hitokoto-form" class="space-y-4">
-              <div>
-                <label for="content" class="block text-sm font-medium text-gray-700 mb-1">内容 <span class="text-red-500">*</span></label>
-                <textarea id="content" name="content" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all-300" placeholder="请输入一言内容..."></textarea>
-                <p id="content-error" class="mt-1 text-red-500 text-sm hidden">请输入一言内容</p>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label for="author" class="block text-sm font-medium text-gray-700 mb-1">作者</label>
-                  <input type="text" id="author" name="author" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all-300" placeholder="请输入作者...">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" @click.prevent="showSection('today')">今日一言</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" @click.prevent="showSection('list')">一言列表</a>
+                        </li>
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link" href="#" @click.prevent="showSection('categories')">分类管理</a>-->
+<!--                        </li>-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" @click.prevent="showSection('submission')">我要投稿</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex">
+                        <button class="btn btn-outline-light me-2" @click="refreshTodayHitokoto">
+                            <i class="fas fa-sync-alt me-1"></i> 刷新一言
+                        </button>
+                    </div>
                 </div>
-                <div>
-                  <label for="source" class="block text-sm font-medium text-gray-700 mb-1">来源</label>
-                  <input type="text" id="source" name="source" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all-300" placeholder="请输入来源...">
-                </div>
-              </div>
-              <div>
-                <label for="category" class="block text-sm font-medium text-gray-700 mb-1">分类</label>
-                <select id="category" name="category" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all-300">
-                  <option value="">请选择分类</option>
-                  <option value="励志">励志</option>
-                  <option value="哲理">哲理</option>
-                  <option value="爱情">爱情</option>
-                  <option value="友情">友情</option>
-                  <option value="生活">生活</option>
-                  <option value="其他">其他</option>
-                </select>
-              </div>
-              <div class="flex justify-end">
-                <button type="submit" class="bg-secondary hover:bg-secondary/90 text-white py-2 px-6 rounded-md transition-all-300 flex items-center">
-                  <i class="fa fa-paper-plane mr-2"></i> 提交
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <!-- 页脚 -->
-  <footer class="bg-dark text-white py-6">
-    <div class="container mx-auto px-4 text-center">
-      <p>© 2025 Cynara All Rights Reserved.</p>
-<!--      <div class="flex justify-center mt-4 space-x-4">-->
-<!--        <a href="#" class="text-gray-400 hover:text-white transition-all-300">-->
-<!--          <i class="fa fa-github text-xl"></i>-->
-<!--        </a>-->
-      </div>
-    </div>
-  </footer>
-
-  <!-- 通知提示 -->
-  <div id="notification" class="fixed bottom-4 right-4 bg-dark text-white px-4 py-3 rounded-md shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center">
-    <i id="notification-icon" class="fa fa-check-circle mr-2"></i>
-    <span id="notification-message">操作成功</span>
-  </div>
-
-  <script>
-    // API 配置
-    const API_BASE_URL = 'https://alayrain.zhngjah.space:2096/api';
-
-    // DOM 元素
-    const navbar = document.getElementById('navbar');
-    const hitokotoContent = document.getElementById('hitokoto-content');
-    const hitokotoAuthor = document.getElementById('hitokoto-author');
-    const hitokotoSource = document.getElementById('hitokoto-source');
-    const newHitokotoBtn = document.getElementById('new-hitokoto-btn');
-    const copyBtn = document.getElementById('copy-btn');
-    const addHitokotoForm = document.getElementById('add-hitokoto-form');
-    const contentInput = document.getElementById('content');
-    const contentError = document.getElementById('content-error');
-    const notification = document.getElementById('notification');
-    const notificationIcon = document.getElementById('notification-icon');
-    const notificationMessage = document.getElementById('notification-message');
-
-    // 页面加载完成后执行
-    document.addEventListener('DOMContentLoaded', () => {
-      // 初始化随机一言
-      fetchRandomHitokoto();
-
-      // 滚动监听，改变导航栏样式
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 10) {
-          navbar.classList.add('py-2', 'bg-white/95', 'backdrop-blur-sm');
-          navbar.classList.remove('py-3', 'bg-white');
-        } else {
-          navbar.classList.add('py-3', 'bg-white');
-          navbar.classList.remove('py-2', 'bg-white/95', 'backdrop-blur-sm');
-        }
-      });
-
-      // 平滑滚动
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-          e.preventDefault();
-          const targetId = this.getAttribute('href');
-          const targetElement = document.querySelector(targetId);
-
-          if (targetElement) {
-            window.scrollTo({
-              top: targetElement.offsetTop - 80,
-              behavior: 'smooth'
-            });
-          }
-        });
-      });
-
-      // 随机一言按钮事件
-      newHitokotoBtn.addEventListener('click', fetchRandomHitokoto);
-
-      // 复制按钮事件
-      copyBtn.addEventListener('click', copyToClipboard);
-
-      // 添加一言表单提交
-      addHitokotoForm.addEventListener('submit', handleAddHitokoto);
-
-      // 内容输入验证
-      contentInput.addEventListener('input', () => {
-        if (contentInput.value.trim() === '') {
-          contentError.classList.remove('hidden');
-        } else {
-          contentError.classList.add('hidden');
-        }
-      });
-    });
-
-    // 获取随机一言
-    function fetchRandomHitokoto() {
-      hitokotoContent.innerHTML = `
-        <div class="text-gray-400 text-center">
-          <i class="fa fa-spinner fa-spin text-2xl mb-2"></i>
-          <p>正在加载一言...</p>
-        </div>
-      `;
-      hitokotoAuthor.textContent = '-';
-      hitokotoSource.textContent = '《-》';
-
-      fetch(`${API_BASE_URL}/hitokoto`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.code === 200) {
-            const hitokoto = data.data;
-            hitokotoContent.textContent = hitokoto.content;
-            hitokotoAuthor.textContent = hitokoto.author || '佚名';
-            hitokotoSource.textContent = hitokoto.source ? `《${hitokoto.source}》` : '《-》';
-
-            // 添加淡入动画
-            hitokotoContent.classList.add('opacity-0');
-            setTimeout(() => {
-              hitokotoContent.classList.remove('opacity-0');
-              hitokotoContent.classList.add('transition-all', 'duration-500', 'opacity-100');
-            }, 10);
-          } else {
-            hitokotoContent.innerHTML = `
-              <div class="text-red-500 text-center">
-                <i class="fa fa-exclamation-circle text-2xl mb-2"></i>
-                <p>加载失败，请稍后重试</p>
-              </div>
-            `;
-          }
-        })
-        .catch(error => {
-          console.error('获取一言失败:', error);
-          hitokotoContent.innerHTML = `
-            <div class="text-red-500 text-center">
-              <i class="fa fa-exclamation-circle text-2xl mb-2"></i>
-              <p>连接断开，请与管理员联系</p>
             </div>
-          `;
+        </nav>
+
+        <!-- 主内容区 -->
+        <div class="container my-5">
+            <!-- 欢迎区域 -->
+            <div class="hero-section text-center">
+                <div class="container">
+                    <h1 class="display-4 fw-bold mb-4">LayRain</h1>
+                    <p class="lead mb-5">发现触动心灵的句子</p>
+
+                    <!-- 今日一言展示区 -->
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="today-hitokoto position-relative">
+                                <i class="fas fa-quote-left quote-icon quote-left"></i>
+                                <i class="fas fa-quote-right quote-icon quote-right"></i>
+                                <h3 class="mb-4">今日一言</h3>
+                                <p class="hitokoto-text display-6 mb-4">
+                                    {{ todayHitokoto.content || '全力加载中...' }}
+                                </p>
+
+                                <div class="d-flex justify-content-center align-items-center flex-wrap">
+                                    <div v-if="todayHitokoto.author" class="me-4 mb-2">
+                                        <span class="author-highlight">
+                                            <i class="fas fa-user me-1"></i> {{ todayHitokoto.author }}
+                                        </span>
+                                    </div>
+                                    <div v-if="todayHitokoto.source" class="me-4 mb-2">
+                                        <span class="source-highlight">
+                                            <i class="fas fa-book me-1"></i> {{ todayHitokoto.source }}
+                                        </span>
+                                    </div>
+                                    <div v-if="todayHitokoto.category" class="mb-2">
+                                        <span class="category-badge">{{ todayHitokoto.category }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button class="btn btn-lg btn-outline-light me-2" @click="refreshTodayHitokoto">
+                                        <i class="fas fa-sync-alt me-1"></i> 换一句
+                                    </button>
+                                    <button class="btn btn-lg btn-light btn-gradient" @click="copyHitokoto(todayHitokoto)">
+                                        <i class="fas fa-copy me-1"></i> 复制
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 今日一言详情区域 -->
+            <transition name="fade" mode="out-in">
+                <div v-if="currentSection === 'today'" class="mb-5">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 highlight-card">
+                                <div class="card-body">
+                                    <h5 class="card-title d-flex align-items-center">
+                                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                                        按分类浏览
+                                    </h5>
+                                    <p class="card-text">选择分类查看特定类型的一言</p>
+
+                                    <div class="mb-3">
+                                        <select class="form-select" v-model="selectedCategory" @change="getHitokotoByCategory">
+                                            <option value="">所有分类</option>
+                                            <option v-for="category in categories" :value="category">{{ category }}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <h6>热门分类</h6>
+                                        <div class="d-flex flex-wrap gap-2 mt-2">
+                                            <span v-for="(category, index) in popularCategories" :key="index"
+                                                  class="badge bg-primary py-2 px-3"
+                                                  style="cursor: pointer;"
+                                                  @click="selectCategory(category)">
+                                                {{ category }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title d-flex align-items-center">
+                                        <i class="fas fa-history text-info me-2"></i>
+                                        历史一言
+                                    </h5>
+                                    <p class="card-text">最近浏览过的一言</p>
+
+                                    <div v-if="history.length > 0">
+                                        <div v-for="(item, index) in history.slice(0, 3)" :key="index" class="mb-3 p-3 bg-light rounded">
+                                            <p class="mb-1">{{ item.content }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <small class="text-muted">
+                                                    <span v-if="item.author">{{ item.author }}</span>
+                                                    <span v-if="item.category"> · {{ item.category }}</span>
+                                                </small>
+                                                <button class="btn btn-sm btn-outline-primary" @click="showHitokotoDetail(item)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <p class="text-muted">暂无浏览记录</p>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <button class="btn btn-outline-secondary w-100" @click="showSection('list')">
+                                            查看全部一言 <i class="fas fa-arrow-right ms-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+
+            <!-- 一言列表 -->
+            <transition name="fade" mode="out-in">
+                <div v-if="currentSection === 'list'" class="mb-5">
+                    <div class="card mb-4">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">一言列表</h5>
+                            <div class="d-flex">
+                                <select class="form-select form-select-sm me-2" v-model="listCategoryFilter" @change="fetchHitokotos">
+                                    <option value="">所有分类</option>
+                                    <option v-for="category in categories" :value="category">{{ category }}</option>
+                                </select>
+                                <div class="input-group input-group-sm" style="width: 200px;">
+                                    <input type="text" class="form-control" placeholder="搜索内容..." v-model="searchQuery" @keyup.enter="searchHitokotos">
+                                    <button class="btn btn-outline-secondary" type="button" @click="searchHitokotos">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div v-for="hitokoto in hitokotoList" :key="hitokoto.id"
+                                     class="list-group-item hitokoto-list-item p-4">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="me-3 flex-grow-1">
+                                            <p class="mb-1">{{ hitokoto.content }}</p>
+                                            <div class="d-flex align-items-center mt-2">
+                                                <small v-if="hitokoto.author" class="text-muted me-3">
+                                                    <i class="fas fa-user me-1"></i> {{ hitokoto.author }}
+                                                </small>
+                                                <small v-if="hitokoto.source" class="text-muted me-3">
+                                                    <i class="fas fa-book me-1"></i> {{ hitokoto.source }}
+                                                </small>
+                                                <span v-if="hitokoto.category" class="badge bg-primary">{{ hitokoto.category }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <button class="btn btn-sm btn-outline-primary me-2" @click="editHitokoto(hitokoto)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                            <div class="text-muted">
+                                显示 {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} 条，共 {{ totalItems }} 条
+                            </div>
+                            <nav>
+                                <ul class="pagination mb-0">
+                                    <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                                        <a class="page-link" href="#" @click.prevent="prevPage">上一页</a>
+                                    </li>
+                                    <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: page === currentPage }">
+                                        <a class="page-link" href="#" @click.prevent="goToPage(page)">{{ page }}</a>
+                                    </li>
+                                    <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                                        <a class="page-link" href="#" @click.prevent="nextPage">下一页</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+
+<!--            &lt;!&ndash; 分类管理 &ndash;&gt;-->
+<!--            <transition name="fade" mode="out-in">-->
+<!--                <div v-if="currentSection === 'categories'" class="mb-5">-->
+<!--                    <div class="card mb-4">-->
+<!--                        <div class="card-header bg-white">-->
+<!--                            <h5 class="mb-0">分类管理</h5>-->
+<!--                        </div>-->
+<!--                        <div class="card-body">-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-md-6 mb-4">-->
+<!--                                    <div class="card h-100">-->
+<!--                                        <div class="card-header bg-light">-->
+<!--                                            <h6 class="mb-0">现有分类</h6>-->
+<!--                                        </div>-->
+<!--                                        <div class="card-body">-->
+<!--                                            <div v-if="categories.length > 0" class="d-flex flex-wrap gap-2">-->
+<!--                                                <span v-for="category in categories" :key="category" class="badge bg-primary p-2">-->
+<!--                                                    {{ category }}-->
+<!--                                                </span>-->
+<!--                                            </div>-->
+<!--                                            <p v-else class="text-muted mb-0">暂无分类</p>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-md-6 mb-4">-->
+<!--                                    <div class="card h-100">-->
+<!--                                        <div class="card-header bg-light">-->
+<!--                                            <h6 class="mb-0">添加新分类</h6>-->
+<!--                                        </div>-->
+<!--                                        <div class="card-body">-->
+<!--                                            <div class="mb-3">-->
+<!--                                                <label class="form-label">分类名称</label>-->
+<!--                                                <input type="text" class="form-control" v-model="newCategory" placeholder="输入新分类名称">-->
+<!--                                            </div>-->
+<!--                                            <button class="btn btn-gradient" @click="addCategory">-->
+<!--                                                <i class="fas fa-plus me-1"></i> 添加分类-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </transition>-->
+
+            <!-- 投稿区域 -->
+            <transition name="fade" mode="out-in">
+                <div v-if="currentSection === 'submission'" class="mb-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="submission-form">
+                                <h3 class="text-center mb-4">投稿新一言</h3>
+                                <p class="text-center text-muted mb-4">分享您喜欢的句子，让更多人感受文字的力量</p>
+
+                                <form @submit.prevent="submitHitokoto">
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold">内容 <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" v-model="submissionForm.content" rows="4" required placeholder="请输入您想分享的句子..."></textarea>
+                                        <div class="form-text">请确保内容健康积极，不超过100字</div>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">作者</label>
+                                            <input type="text" class="form-control" v-model="submissionForm.author" placeholder="作者名称（可选）">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">来源</label>
+                                            <input type="text" class="form-control" v-model="submissionForm.source" placeholder="来源（如书名、电影名等）">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold">分类</label>
+                                        <div class="d-flex">
+                                            <select class="form-select me-2" v-model="submissionForm.category">
+                                                <option value="">选择分类</option>
+                                                <option v-for="category in categories" :value="category">{{ category }}</option>
+                                            </select>
+                                            <input type="text" class="form-control" v-model="newCategoryForSubmission" placeholder="或输入新分类">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold">投稿人信息（可选）</label>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <input type="text" class="form-control" v-model="submissionForm.contributor" placeholder="您的名字">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="email" class="form-control" v-model="submissionForm.email" placeholder="您的邮箱">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center mt-5">
+                                        <button type="button" class="btn btn-outline-secondary btn-lg me-4 px-4" @click="resetSubmissionForm">
+                                            重置
+                                        </button>
+                                        <button type="submit" class="btn btn-success-gradient btn-lg px-4">
+                                            <i class="fas fa-paper-plane me-2"></i> 提交投稿
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="card mt-4">
+                                <div class="card-body text-center">
+                                    <h5 class="mb-3">投稿须知</h5>
+                                    <ul class="list-unstyled text-start">
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> 投稿内容需为原创或已获得授权</li>
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> 内容应积极向上，传递正能量</li>
+                                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> 投稿审核通过后将在1-3个工作日内发布</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <h5><i class="fas fa-quote-left me-2"></i>LayRain</h5>
+                        <p>用文字传递力量</p>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h5>功能导航</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white" @click.prevent="showSection('today')">今日一言</a></li>
+                            <li><a href="#" class="text-white" @click.prevent="showSection('list')">一言列表</a></li>
+<!--                            <li><a href="#" class="text-white" @click.prevent="showSection('categories')">分类管理</a></li>-->
+                            <li><a href="#" class="text-white" @click.prevent="showSection('submission')">我要投稿</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h5>友情链接</h5>
+                        <ul class="list-unstyled">
+                            <a href="https://www.zhngjah.space/" class="text-white">ZhngJah个人站</a><br>
+                            <a href="https://www.hvhbbs.cc/" class="text-white">MOEBBS</a>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="bg-light">
+                <div class="text-center py-3">
+                    <p class="mb-0">© 2025 LayRain</p><br>
+                    <p class="mb-0">Powered By CYNARA Group</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- 投稿成功模态框 -->
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">投稿成功</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center py-5">
+                        <i class="fas fa-check-circle text-success display-1 mb-4"></i>
+                        <h4 class="mb-3">感谢您的投稿！</h4>
+                        <p>您的投稿已成功提交，我们的编辑团队将在1-3个工作日内审核。</p>
+                        <p>审核通过后，您的内容将出现在一言列表中。</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                apiBase: 'https://alayrain.zhngjah.space:2096/api',
+                currentSection: 'today',
+                todayHitokoto: {},
+                history: [],
+                categories: ['励志', '爱情', '哲理', '诗词', '动漫', '影视', '名人名言', '搞笑'],
+                popularCategories: ['励志', '动漫', '哲理', '诗词'],
+                selectedCategory: '',
+                hitokotoList: [],
+                currentPage: 1,
+                pageSize: 10,
+                totalItems: 0,
+                totalPages: 1,
+                searchQuery: '',
+                listCategoryFilter: '',
+                submissionForm: {
+                    content: '',
+                    author: '',
+                    source: '',
+                    category: '',
+                    contributor: '',
+                    email: ''
+                },
+                newCategory: '',
+                newCategoryForSubmission: '',
+                editingHitokoto: false,
+                hitokotoToDelete: {},
+                stats: {
+                    totalHitokotos: 19,
+                    totalCategories: 2,
+                    todayAdded: 19
+                }
+            },
+            mounted() {
+                this.refreshTodayHitokoto();
+                this.fetchStats();
+            },
+            methods: {
+                // 导航方法
+                showSection(section) {
+                    this.currentSection = section;
+                    this.editingHitokoto = false;
+
+                    if (section === 'list') {
+                        this.fetchHitokotos();
+                    }
+
+                    window.scrollTo(0, 0);
+                },
+
+                // 今日一言方法
+                refreshTodayHitokoto() {
+                    axios.get(`${this.apiBase}/hitokoto`)
+                        .then(response => {
+                            this.todayHitokoto = response.data.data;
+                            this.addToHistory(this.todayHitokoto);
+                        })
+                        .catch(error => {
+                            console.error('获取今日一言失败:', error);
+                            this.todayHitokoto = {
+                                content: '获取一言失败，请稍后再试...',
+                                author: '系统提示',
+                                category: '错误'
+                            };
+                        });
+                },
+
+                getHitokotoByCategory() {
+                    this.refreshTodayHitokoto();
+                },
+
+                selectCategory(category) {
+                    this.selectedCategory = category;
+                    this.refreshTodayHitokoto();
+                },
+
+                addToHistory(hitokoto) {
+                    // 避免重复添加
+                    if (this.history.some(item => item.id === hitokoto.id)) return;
+
+                    this.history.unshift(hitokoto);
+                    if (this.history.length > 10) {
+                        this.history.pop();
+                    }
+                },
+
+                showHitokotoDetail(hitokoto) {
+                    this.todayHitokoto = hitokoto;
+                    this.showSection('today');
+                },
+
+                // 一言列表方法
+                fetchHitokotos() {
+                     // 构建请求参数
+                  const params = {
+                      page: this.currentPage,
+                      pageSize: this.pageSize,
+                      category: this.listCategoryFilter,
+                      query: this.searchQuery
+                  };
+
+                  axios.get(`${this.apiBase}/hitokoto/list`, { params })
+                      .then(response => {
+                          this.hitokotoList = response.data.data;
+                          this.totalItems = response.data.total;
+                          this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+                      })
+                      .catch(error => {
+                          console.error('获取一言列表失败:', error);
+                          this.hitokotoList = [];
+                          this.totalItems = 0;
+                          this.totalPages = 1;
+                      });
+                },
+
+                // 提交投稿方法
+                submitHitokoto() {
+                    // 检查是否有新分类需要添加
+                    if (this.newCategoryForSubmission) {
+                        this.categories.push(this.newCategoryForSubmission);
+                        this.submissionForm.category = this.newCategoryForSubmission;
+                        this.newCategoryForSubmission = '';
+                    }
+
+                    // 发送投稿请求
+                    axios.post(`${this.apiBase}/hitokoto`, this.submissionForm)
+                        .then(response => {
+                            console.log('投稿成功:', response.data);
+                            // 显示成功模态框
+                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                            successModal.show();
+                            // 重置表单
+                            this.resetSubmissionForm();
+                        })
+                        .catch(error => {
+                            console.error('投稿失败:', error);
+                        });
+                },
+
+                // 重置投稿表单方法
+                resetSubmissionForm() {
+                    this.submissionForm = {
+                        content: '',
+                        author: '',
+                        source: '',
+                        category: '',
+                        contributor: '',
+                        email: ''
+                    };
+                },
+
+                // 添加分类方法
+                addCategory() {
+                    if (this.newCategory) {
+                        this.categories.push(this.newCategory);
+                        this.newCategory = '';
+                    }
+                },
+
+                // 分页相关方法
+                prevPage() {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                        this.fetchHitokotos();
+                    }
+                },
+
+                nextPage() {
+                    if (this.currentPage < this.totalPages) {
+                        this.currentPage++;
+                        this.fetchHitokotos();
+                    }
+                },
+
+                goToPage(page) {
+                    this.currentPage = page;
+                    this.fetchHitokotos();
+                },
+
+                // 搜索一言方法
+                searchHitokotos() {
+                  this.currentPage = 1; // 重置到第一页
+                  this.fetchHitokotos();
+                },
+
+                // 复制一言内容方法
+                copyHitokoto(hitokoto) {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = hitokoto.content;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                },
+
+                // 获取统计信息方法
+                fetchStats() {
+                    axios.get(`${this.apiBase}/stats`)
+                    .then(response => {
+                        this.stats = response.data;
+                    })
+                    .catch(error => {
+                        console.error('获取统计信息失败:', error);
+                        // 使用默认统计数据
+                        this.stats = {
+                            totalHitokotos: 0,
+                            totalCategories: 0,
+                            todayAdded: 0
+                        };
+                    });
+                }
+            }
         });
-    }
-
-    // 复制到剪贴板
-    function copyToClipboard() {
-      const text = `${hitokotoContent.textContent} ${hitokotoAuthor.textContent} ${hitokotoSource.textContent}`;
-
-      navigator.clipboard.writeText(text)
-        .then(() => {
-          showNotification('复制成功', 'success');
-        })
-        .catch(err => {
-          console.error('复制失败:', err);
-          showNotification('复制失败，请手动复制', 'error');
-        });
-    }
-
-    // 处理添加一言
-    function handleAddHitokoto(e) {
-      e.preventDefault();
-
-      // 验证内容
-      if (contentInput.value.trim() === '') {
-        contentError.classList.remove('hidden');
-        return;
-      }
-
-      const formData = {
-        content: contentInput.value,
-        author: document.getElementById('author').value || null,
-        source: document.getElementById('source').value || null,
-        category: document.getElementById('category').value || null
-      };
-
-      // 显示加载状态
-      const submitButton = addHitokotoForm.querySelector('button[type="submit"]');
-      const originalText = submitButton.innerHTML;
-      submitButton.disabled = true;
-      submitButton.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 提交中...';
-
-      fetch(`${API_BASE_URL}/hitokoto`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.code === 201) {
-            showNotification('添加成功！感谢分享', 'success');
-            addHitokotoForm.reset();
-
-            // 自动切换到随机一言
-            setTimeout(() => {
-              document.querySelector('a[href="#random"]').click();
-              fetchRandomHitokoto();
-            }, 1500);
-          } else {
-            showNotification('添加失败: ' + data.message, 'error');
-          }
-        })
-        .catch(error => {
-          console.error('添加一言失败:', error);
-          showNotification('添加失败，请检查网络连接', 'error');
-        })
-        .finally(() => {
-          submitButton.disabled = false;
-          submitButton.innerHTML = originalText;
-        });
-    }
-
-    // 显示通知
-    function showNotification(message, type = 'info') {
-      // 设置图标和样式
-      if (type === 'success') {
-        notificationIcon.className = 'fa fa-check-circle mr-2';
-        notification.classList.add('bg-green-600');
-        notification.classList.remove('bg-red-600', 'bg-blue-600');
-      } else if (type === 'error') {
-        notificationIcon.className = 'fa fa-times-circle mr-2';
-        notification.classList.add('bg-red-600');
-        notification.classList.remove('bg-green-600', 'bg-blue-600');
-      } else {
-        notificationIcon.className = 'fa fa-info-circle mr-2';
-        notification.classList.add('bg-blue-600');
-        notification.classList.remove('bg-green-600', 'bg-red-600');
-      }
-
-      // 设置消息
-      notificationMessage.textContent = message;
-
-      // 显示通知
-      notification.classList.remove('translate-y-20', 'opacity-0');
-      notification.classList.add('translate-y-0', 'opacity-100');
-
-      // 3秒后隐藏
-      setTimeout(() => {
-        notification.classList.remove('translate-y-0', 'opacity-100');
-        notification.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
-    }
-  </script>
+    </script>
 </body>
 </html>
