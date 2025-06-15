@@ -134,11 +134,10 @@ def delete_hitokoto(hitokoto_id):
 @app.route('/api/hitokoto/list', methods=['GET'])
 def list_hitokoto():
     """获取一言列表"""
-    limit = int(request.args.get('limit', 10))
     offset = int(request.args.get('offset', 0))
     category = request.args.get('category')
 
-    hitokoto_list = hitokoto.list_hitokoto(limit, offset, category)
+    hitokoto_list = hitokoto.list_hitokoto(offset=offset, category=category)
     total = hitokoto.count_hitokoto(category)
 
     return jsonify({
@@ -147,7 +146,6 @@ def list_hitokoto():
         'data': {
             'list': hitokoto_list,
             'total': total,
-            'limit': limit,
             'offset': offset
         }
     })
