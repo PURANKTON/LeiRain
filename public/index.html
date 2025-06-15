@@ -703,50 +703,50 @@
 
                 // 一言列表方法
                 fetchHitokotos() {
-                  this.loading = true;
-                  this.error = null;
+                    this.loading = true;
+                    this.error = null;
 
-                  const params = {
-                    page: this.currentPage, // 使用当前页码作为请求参数
-                    pageSize: this.pageSize,
-                    category: this.listCategoryFilter,
-                    query: this.searchQuery
-                  };
+                    const params = {
+                        page: this.currentPage, // 使用当前页码作为请求参数
+                        pageSize: this.pageSize,
+                        category: this.listCategoryFilter,
+                        query: this.searchQuery
+                    };
 
-                  axios.get(`${this.apiBase}/hitokoto/list`, { params })
-                    .then(response => {
-                      console.log('完整API响应:', response);
+                    axios.get(`${this.apiBase}/hitokoto/list`, { params })
+                      .then(response => {
+                            console.log('完整API响应:', response);
 
-                      // 安全获取数据
-                      const apiData = response.data || {};
-                      const hitokotoData = apiData.data || {};
+                            // 安全获取数据
+                            const apiData = response.data || {};
+                            const hitokotoData = apiData.data || {};
 
-                      // 从data.list获取一言列表
-                      const hitokotoList = hitokotoData.list || [];
+                            // 从data.list获取一言列表
+                            const hitokotoList = hitokotoData.list || [];
 
-                      // 验证数据格式
-                      if (!Array.isArray(hitokotoList)) {
-                        throw new Error('一言列表数据格式不正确');
-                      }
+                            // 验证数据格式
+                            if (!Array.isArray(hitokotoList)) {
+                                throw new Error('一言列表数据格式不正确');
+                            }
 
-                      this.hitokotoList = hitokotoList;
-                      this.totalItems = typeof hitokotoData.total === 'number' ? hitokotoData.total : hitokotoList.length;
+                            this.hitokotoList = hitokotoList;
+                            this.totalItems = typeof hitokotoData.total === 'number' ? hitokotoData.total : hitokotoList.length;
 
-                      // 分页计算
-                      this.totalPages = this.totalItems > 0 && this.pageSize > 0
-                        ? Math.ceil(this.totalItems / this.pageSize)
-                        : 1;
-                    })
-                    .catch(error => {
-                      console.error('获取一言列表失败:', error);
-                      this.error = error.message || '获取数据失败';
-                      this.hitokotoList = [];
-                      this.totalItems = 0;
-                      this.totalPages = 1;
-                    })
-                    .finally(() => {
-                      this.loading = false;
-                    });
+                            // 分页计算
+                            this.totalPages = this.totalItems > 0 && this.pageSize > 0
+                             ? Math.ceil(this.totalItems / this.pageSize)
+                              : 1;
+                        })
+                      .catch(error => {
+                            console.error('获取一言列表失败:', error);
+                            this.error = error.message || '获取数据失败';
+                            this.hitokotoList = [];
+                            this.totalItems = 0;
+                            this.totalPages = 1;
+                        })
+                      .finally(() => {
+                            this.loading = false;
+                        });
                 },
 
                 // 提交投稿方法
