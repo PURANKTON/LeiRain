@@ -641,16 +641,11 @@
                 newCategory: '',
                 newCategoryForSubmission: '',
                 editingHitokoto: false,
-                hitokotoToDelete: {},
-                stats: {
-                    totalHitokotos: 19,
-                    totalCategories: 2,
-                    todayAdded: 19
+                hitokotoToDelete: {}
                 }
             },
             mounted() {
                 this.refreshTodayHitokoto();
-                this.fetchStats();
             },
             methods: {
                 // 导航方法
