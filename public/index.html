@@ -705,24 +705,24 @@
                 fetchHitokotos() {
                      // 构建请求参数
                   const params = {
-                      page: this.currentPage,
-                      pageSize: this.pageSize,
-                      category: this.listCategoryFilter,
-                      query: this.searchQuery
+                    page: this.currentPage,
+                    pageSize: this.pageSize,
+                    category: this.listCategoryFilter,
+                    query: this.searchQuery
                   };
 
-                  axios.get(`${this.apiBase}/hitokoto/list`, { params })
-                      .then(response => {
-                          this.hitokotoList = response.data.data;
-                          this.totalItems = response.data.total;
-                          this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-                      })
-                      .catch(error => {
-                          console.error('获取一言列表失败:', error);
-                          this.hitokotoList = [];
-                          this.totalItems = 0;
-                          this.totalPages = 1;
-                      });
+                  axios.get(`${this.apiBase}/hitokoto`, { params })
+                    .then(response => {
+                        this.hitokotoList = response.data.data;
+                        this.totalItems = response.data.total;
+                        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+                    })
+                    .catch(error => {
+                        console.error('获取一言列表失败:', error);
+                        this.hitokotoList = [];
+                        this.totalItems = 0;
+                        this.totalPages = 1;
+                    });
                 },
 
                 // 提交投稿方法
@@ -791,8 +791,8 @@
 
                 // 搜索一言方法
                 searchHitokotos() {
-                  this.currentPage = 1; // 重置到第一页
-                  this.fetchHitokotos();
+                    this.currentPage = 1;
+                    this.fetchHitokotos();
                 },
 
                 // 复制一言内容方法
